@@ -9,7 +9,7 @@ services:
       context: config
       dockerfile: amp.Dockerfile
     volumes:
-      - ../../:/var/www/html/
+      - ../../../../:/var/www/html/
       - ./config/files/amp/default-host.conf:/etc/apache2/sites-available/000-default.conf
       - ./config/files/amp/xdebug.ini:/etc/php/8.3/mods-available/xdebug.ini
     ports:
