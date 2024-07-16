@@ -1,0 +1,16 @@
+{
+    "name": "tereta/framework.docker",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Tereta\\Docker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tereta Alexander",
+            "email": "tereta.alexander@gmail.com"
+        }
+    ],
+    "require": {}
+}
