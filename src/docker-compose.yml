@@ -12,6 +12,7 @@ services:
       - ../../../../:/var/www/html/
       - ./config/files/amp/default-host.conf:/etc/apache2/sites-available/000-default.conf
       - ./config/files/amp/xdebug.ini:/etc/php/8.3/mods-available/xdebug.ini
+      - ./config/files/amp/php.ini:/etc/php/8.3/apache2/php.ini
     ports:
       - "80:80"
     extra_hosts:
