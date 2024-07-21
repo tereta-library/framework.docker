@@ -28,7 +28,8 @@ RUN echo "" >>  /usr/local/bin/start-services.sh
 RUN echo "echo \"Starting mysql server\"" >>  /usr/local/bin/start-services.sh
 RUN echo "service mysql start" >>  /usr/local/bin/start-services.sh
 RUN echo "echo \"Starting apache2 server\"" >>  /usr/local/bin/start-services.sh
-RUN echo "apache2ctl -D FOREGROUND" >>  /usr/local/bin/start-services.sh
+RUN echo "service apache2 start" >>  /usr/local/bin/start-services.sh
+RUN echo "tail -f /var/log/apache2/error.log" >>  /usr/local/bin/start-services.sh
 
 RUN usermod -d /var/lib/mysql mysql
 
