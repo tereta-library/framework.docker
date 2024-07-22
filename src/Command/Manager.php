@@ -2,13 +2,14 @@
 
 namespace Framework\Docker\Command;
 
-use Framework\Cli\Abstract\Command;
+use Framework\Cli\Interface\Controller;
+use Framework\Cli\Symbol;
 use Framework\Helper\Config;
 use InvalidArgumentException;
 use Framework\Application\Manager as ApplicationManager;
 use Exception;
 
-class Manager extends Command
+class Manager implements Controller
 {
     const DOCKER_IMAGE_NAME = 'framework.docker:latest';
 
@@ -88,14 +89,14 @@ class Manager extends Command
      */
     private function interactiveConfiguration(): void
     {
-        echo static::SYMBOL_COLOR_BRIGHT_BLUE . "Configuration...\n" . static::SYMBOL_COLOR_RESET;
+        echo Symbol::COLOR_BRIGHT_BLUE . "Configuration...\n" . Symbol::COLOR_RESET;
         echo "Project name (framework): ";
         $input = trim(fgets(STDIN));
         if (!$input) {
             $input = 'framework';
         }
-        echo static::SYMBOL_UP_LINE . static::SYMBOL_CLEAR_LINE .
-            "Project name: " . static::SYMBOL_COLOR_GREEN . $input . static::SYMBOL_COLOR_RESET . "\n";
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Project name: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
         $this->dockerConfig->set('name', $input);
 
         echo "Local HTTP port (80): ";
@@ -103,14 +104,14 @@ class Manager extends Command
         if (!$input) {
             $input = '80';
         }
-        echo static::SYMBOL_UP_LINE . static::SYMBOL_CLEAR_LINE .
-            "Local HTTP port: " . static::SYMBOL_COLOR_GREEN . $input . static::SYMBOL_COLOR_RESET . "\n";
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Local HTTP port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
 
         $this->dockerConfig->set('port', $input);
 
         $this->dockerConfig->save();
 
-        echo static::SYMBOL_COLOR_GREEN . "Successfully configured\n" . static::SYMBOL_COLOR_RESET;
+        echo Symbol::COLOR_GREEN . "Successfully configured\n" . Symbol::COLOR_RESET;
         $this->help();
     }
 
@@ -123,11 +124,12 @@ class Manager extends Command
     {
         $containerName = $this->dockerConfig->get('name') ?? 'framework';
 
-        echo "To build image: " . static::SYMBOL_COLOR_GREEN . "docker:build:image\n" . static::SYMBOL_COLOR_RESET .
-             "To build container: " . static::SYMBOL_COLOR_GREEN . "docker:build\n" . static::SYMBOL_COLOR_RESET .
-             "To run container: " . static::SYMBOL_COLOR_GREEN . "php cli.php docker:run\n" . static::SYMBOL_COLOR_RESET .
-             "To stop the container: " . static::SYMBOL_COLOR_GREEN . "php cli.php docker:stop\n" . static::SYMBOL_COLOR_RESET .
-             "To enter the container: " . static::SYMBOL_COLOR_GREEN . "docker exec -it {$containerName} /bin/bash\n" . static::SYMBOL_COLOR_RESET;
+        echo "To build image: " . Symbol::COLOR_GREEN . "docker:build:image\n" . Symbol::COLOR_RESET .
+             "To build container: " . Symbol::COLOR_GREEN . "docker:build\n" . Symbol::COLOR_RESET .
+             "To run container: " . Symbol::COLOR_GREEN . "php cli.php docker:start\n" . Symbol::COLOR_RESET .
+             "To stop the container: " . Symbol::COLOR_GREEN . "php cli.php docker:stop\n" . Symbol::COLOR_RESET .
+             "To stop the container: " . Symbol::COLOR_GREEN . "php cli.php docker:setup\n" . Symbol::COLOR_RESET .
+             "To enter the container: " . Symbol::COLOR_GREEN . "docker exec -it {$containerName} /bin/bash\n" . Symbol::COLOR_RESET;
     }
 
     /**
@@ -217,7 +219,22 @@ class Manager extends Command
      */
     public function command(): void
     {
-        var_dump(func_get_args());
-        echo "Hellow World!\n";
+        $name = $this->dockerConfig->get('name') ?? 'framework';
+
+        shell_exec("docker exec {$name} " . implode(" ", func_get_args()));
+    }
+
+    /**
+     * @cli docker:setup
+     * @cliDescription Setup and upgrade the configuration structure and modules inside docker
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function setupDocker(): void
+    {
+        $name = $this->dockerConfig->get('name') ?? 'framework';
+        $result = shell_exec("docker exec {$name} php /var/www/html/cli.php setup");
+        echo $result;
     }
 }
