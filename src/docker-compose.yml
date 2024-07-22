@@ -1,8 +1,6 @@
-name: framework
-
 services:
-  framework_amp:
-    container_name: framework_amp
+  framework:
+    container_name: framework
     env_file:
       - ../../../../docker.env
     build:

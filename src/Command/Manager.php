@@ -220,8 +220,14 @@ class Manager implements Controller
     public function command(): void
     {
         $name = $this->dockerConfig->get('name') ?? 'framework';
+        $args = func_get_args();
+        if (!$args) {
+            throw new InvalidArgumentException("Command is required");
+        }
 
-        shell_exec("docker exec {$name} " . implode(" ", func_get_args()));
+        $escapedArgs = array_map('escapeshellarg', $args);
+        $command = "docker exec -it {$name}  /bin/bash -c \"" . implode(" ", $escapedArgs) . "\"";
+        echo shell_exec($command);
     }
 
     /**
@@ -234,7 +240,8 @@ class Manager implements Controller
     public function setupDocker(): void
     {
         $name = $this->dockerConfig->get('name') ?? 'framework';
-        $result = shell_exec("docker exec {$name} php /var/www/html/cli.php setup");
+
+        $result = shell_exec("docker exec -it {$name} /bin/bash -c \"php /var/www/html/cli.php setup\"");
         echo $result;
     }
 }
