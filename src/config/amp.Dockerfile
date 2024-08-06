@@ -35,6 +35,12 @@ RUN echo "tail -f /var/log/apache2/error.log" >>  /usr/local/bin/start-services.
 
 RUN usermod -d /var/lib/mysql mysql
 
+RUN echo service mysql start
+RUN echo "CREATE DATABASE developer" | mysql
+RUN echo "CREATE USER 'developer'@'localhost' IDENTIFIED BY 'developer'" | mysql
+RUN echo "GRANT ALL PRIVILEGES ON developer.* TO 'developer'@'localhost'" | mysql
+RUN echo service mysql stop
+
 RUN chmod +x /usr/local/bin/start-services.sh
 
 EXPOSE 80 3306 9000 9003
