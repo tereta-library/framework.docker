@@ -34,6 +34,14 @@ class Manager implements Controller
     private ?Config $dockerConfig;
 
     /**
+     * @var string[]
+     */
+    private $configKeys = [
+        'name',
+        'httpPort'
+    ];
+
+    /**
      * Run constructor.
      */
     public function __construct()
@@ -44,11 +52,6 @@ class Manager implements Controller
 
         $this->dockerConfig = (new Config('php'))->load(ApplicationManager::getRootDirectory() . '/app/etc/docker.php');
     }
-
-    private $configKeys = [
-        'name',
-        'httpPort'
-    ];
 
     /**
      * @cli docker:configure
@@ -107,7 +110,18 @@ class Manager implements Controller
         echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
             "Local HTTP port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
 
-        $this->dockerConfig->set('port', $input);
+        $this->dockerConfig->set('http.port', $input);
+
+
+        echo "Local MySQL port (3306): ";
+        $input = trim(fgets(STDIN));
+        if (!$input) {
+            $input = '3306';
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Local MySQL port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
+
+        $this->dockerConfig->set('mysql.port', $input);
 
         $this->dockerConfig->save();
 
@@ -158,7 +172,8 @@ class Manager implements Controller
     public function build(): void
     {
         $name = $this->dockerConfig->get('name') ?? 'framework';
-        $port = $this->dockerConfig->get('port') ?? '80';
+        $httpPort = $this->dockerConfig->get('http.port') ?? '80';
+        $mysqlPort = $this->dockerConfig->get('mysql.port') ?? '3306';
 
         echo "Building docker container [{$name}]...\n";
 
@@ -168,7 +183,9 @@ class Manager implements Controller
             "-v {$this->dockerContext}/files/amp/xdebug.ini:/etc/php/8.3/mods-available/xdebug.ini " .
             "-v {$this->dockerContext}/files/amp/php.ini:/etc/php/8.3/apache2/php.ini " .
             "--add-host host.docker.internal:host-gateway " .
-            "-p {$port}:80 " . static::DOCKER_IMAGE_NAME;
+            "-p {$httpPort}:80 " .
+            "-p {$mysqlPort}:3306 " .
+            static::DOCKER_IMAGE_NAME;
 
         echo shell_exec($command);
     }

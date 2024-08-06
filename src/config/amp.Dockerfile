@@ -2,6 +2,8 @@ FROM ubuntu:24.10
 
 RUN ln -snf /usr/share/zoneinfo/GMT /etc/localtime && echo GMT > /etc/timezone
 
+RUN echo "" > '/var/log/xdebug.log'; chmod 777 '/var/log/xdebug.log';
+
 RUN apt-get clean && apt-get update
 
 RUN apt-get install -y php php-fpm php-bcmath php-cli php-oauth php-common \
