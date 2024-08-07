@@ -40,6 +40,16 @@ RUN usermod -d /var/lib/mysql mysql
 
 RUN chmod +x /usr/local/bin/start-services.sh
 
+RUN echo "echo \"···························WWW.TERETA.DEV······························\"" >> /root/.bashrc
+RUN echo "echo \"·······································································\"" >> /root/.bashrc
+RUN echo "echo \": _____                        _                     _                :\"" >> /root/.bashrc
+RUN echo "echo \":|_   _|   ___   _ __    ___  | |_    __ _        __| |   ___  __   __:\"" >> /root/.bashrc
+RUN echo "echo \":  | |    / _ \ | '__|  / _ \ | __|  / _  |      / _  |  / _ \ \ \ / /:\"" >> /root/.bashrc
+RUN echo "echo \":  | |   |  __/ | |    |  __/ | |_  | (_| |  _  | (_| | |  __/  \ V / :\"" >> /root/.bashrc
+RUN echo "echo \":  |_|    \___| |_|     \___|  \__|  \__,_| (_)  \__,_|  \___|   \_/  :\"" >> /root/.bashrc
+RUN echo "echo \"·······································································\"" >> /root/.bashrc
+RUN echo "echo \"·······································································\"" >> /root/.bashrc
+
 EXPOSE 80 3306 9000 9003
 
 CMD ["/usr/local/bin/start-services.sh"]

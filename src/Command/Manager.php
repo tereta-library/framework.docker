@@ -265,7 +265,7 @@ class Manager implements Controller
             $counter++;
             $command = "docker exec -it {$name} /bin/bash -c \"mysql -e 'SELECT NOW();'\"";
             $result = shell_exec($command);
-            if (!str_starts_with($result, 'ERROR 2002 (HY000): ')) {
+            if (!str_starts_with((string) $result, 'ERROR 2002 (HY000): ')) {
                 break;
             }
         }
