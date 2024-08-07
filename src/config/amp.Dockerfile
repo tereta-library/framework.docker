@@ -25,6 +25,9 @@ RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-di
 
 RUN apt-get install -y mysql-server;
 
+RUN sed -i 's/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+RUN sed -i 's/^mysqlx-bind-address\s*=\s*127.0.0.1/mysqlx-bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+
 RUN echo "#!/bin/bash" >  /usr/local/bin/start-services.sh
 RUN echo "" >>  /usr/local/bin/start-services.sh
 RUN echo "echo \"Starting mysql server\"" >>  /usr/local/bin/start-services.sh
@@ -34,12 +37,6 @@ RUN echo "service apache2 start" >>  /usr/local/bin/start-services.sh
 RUN echo "tail -f /var/log/apache2/error.log" >>  /usr/local/bin/start-services.sh
 
 RUN usermod -d /var/lib/mysql mysql
-
-RUN echo service mysql start
-RUN echo "CREATE DATABASE developer" | mysql
-RUN echo "CREATE USER 'developer'@'localhost' IDENTIFIED BY 'developer'" | mysql
-RUN echo "GRANT ALL PRIVILEGES ON developer.* TO 'developer'@'localhost'" | mysql
-RUN echo service mysql stop
 
 RUN chmod +x /usr/local/bin/start-services.sh
 

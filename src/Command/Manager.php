@@ -109,10 +109,33 @@ class Manager implements Controller
         }
         echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
             "Local HTTP port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
-
         $this->dockerConfig->set('http.port', $input);
 
+        echo "Will you use local MySQL server (Yes): ";
+        $input = trim(fgets(STDIN));
+        if (!$input) {
+            $input = 'Yes';
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Will you use local MySQL server : " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
 
+        $this->dockerConfig->set('mysql', null);
+
+        if ($input == 'Yes') {
+            $this->interactiveConfigurationMysql();
+        }
+
+        $this->dockerConfig->save();
+
+        echo Symbol::COLOR_GREEN . "Successfully configured\n" . Symbol::COLOR_RESET . "\n";
+        $this->help();
+    }
+
+    /**
+     * @return void
+     */
+    private function interactiveConfigurationMysql(): void
+    {
         echo "Local MySQL port (3306): ";
         $input = trim(fgets(STDIN));
         if (!$input) {
@@ -120,13 +143,34 @@ class Manager implements Controller
         }
         echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
             "Local MySQL port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
-
         $this->dockerConfig->set('mysql.port', $input);
 
-        $this->dockerConfig->save();
+        echo "Local MySQL user (developer): ";
+        $input = trim(fgets(STDIN));
+        if (!$input) {
+            $input = 'developer';
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Local MySQL user (developer): " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
+        $this->dockerConfig->set('mysql.user', $input);
 
-        echo Symbol::COLOR_GREEN . "Successfully configured\n" . Symbol::COLOR_RESET;
-        $this->help();
+        echo "Local MySQL password (developer): ";
+        $input = trim(fgets(STDIN));
+        if (!$input) {
+            $input = 'developer';
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Local MySQL password: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
+        $this->dockerConfig->set('mysql.password', $input);
+
+        echo "Local MySQL database (developer): ";
+        $input = trim(fgets(STDIN));
+        if (!$input) {
+            $input = 'developer';
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Local MySQL database: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
+        $this->dockerConfig->set('mysql.database', $input);
     }
 
     /**
@@ -138,7 +182,9 @@ class Manager implements Controller
     {
         $containerName = $this->dockerConfig->get('name') ?? 'framework';
 
-        echo "To build image: " . Symbol::COLOR_GREEN . "docker:build:image\n" . Symbol::COLOR_RESET .
+        echo "To use interactive configure docker: " . Symbol::COLOR_GREEN . "php cli.php docker:configure\n" . Symbol::COLOR_RESET .
+             "To configure docker options: " . Symbol::COLOR_GREEN . "php cli.php docker:configure [key] [value]\n" . Symbol::COLOR_RESET .
+             "To build image: " . Symbol::COLOR_GREEN . "docker:build:image\n" . Symbol::COLOR_RESET .
              "To build container: " . Symbol::COLOR_GREEN . "docker:build\n" . Symbol::COLOR_RESET .
              "To run container: " . Symbol::COLOR_GREEN . "php cli.php docker:start\n" . Symbol::COLOR_RESET .
              "To stop the container: " . Symbol::COLOR_GREEN . "php cli.php docker:stop\n" . Symbol::COLOR_RESET .
@@ -188,8 +234,56 @@ class Manager implements Controller
             static::DOCKER_IMAGE_NAME;
 
         echo shell_exec($command);
+
+        $this->buildConfigureDatabase();
     }
 
+    /**
+     * @return void
+     */
+    private function buildConfigureDatabase(): void
+    {
+        if ($this->dockerConfig->get('mysql') === null) {
+            return;
+        }
+
+        echo "Configuring database...\n";
+        $name = $this->dockerConfig->get('name') ?? 'framework';
+        $mysqlUser = $this->dockerConfig->get('mysql.user') ?? 'developer';
+        $mysqlPassword = $this->dockerConfig->get('mysql.password') ?? 'developer';
+        $mysqlDatabase = $this->dockerConfig->get('mysql.database') ?? 'developer';
+
+        echo "\n";
+        $counter = 0;
+        $symbols = ['|', '/', '-', '\\'];
+        $symbols = array_merge($symbols, $symbols, $symbols);
+        while (true) {
+            echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+                "Checking if MySQL started: " . Symbol::COLOR_GREEN . $symbols[$counter] . Symbol::COLOR_RESET . "\n";
+            usleep(3000 * 30);
+            if ($counter >= 9) throw new Exception("MySQL server is not started");
+            $counter++;
+            $command = "docker exec -it {$name} /bin/bash -c \"mysql -e 'SELECT NOW();'\"";
+            $result = shell_exec($command);
+            if (!str_starts_with($result, 'ERROR 2002 (HY000): ')) {
+                break;
+            }
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE;
+
+        echo "Creating database...\n";
+        $command = "docker exec -it {$name} /bin/bash -c \"mysql -e 'CREATE DATABASE IF NOT EXISTS {$mysqlDatabase};'\"";
+        echo shell_exec($command);
+
+        echo "Creating database user...\n";
+        $command = "docker exec -it {$name} /bin/bash -c \"mysql -e \\\"CREATE USER IF NOT EXISTS '{$mysqlUser}'@'%' IDENTIFIED BY '{$mysqlPassword}'\\\"\"";
+        echo shell_exec($command);
+
+        echo "Creating database privileges...\n";
+        $command = "docker exec -it {$name} /bin/bash -c \"mysql -e \\\"GRANT ALL PRIVILEGES ON {$mysqlDatabase}.* TO '{$mysqlUser}'@'%' WITH GRANT OPTION\\\"\"";
+        echo shell_exec($command);
+    }
+    
     /**
      * @cli docker:start
      * @cliDescription Start docker container
