@@ -214,6 +214,7 @@ class Manager implements Controller
      * @cli docker:build
      * @cliDescription Build docker container
      * @return void
+     * @throws Exception
      */
     public function build(): void
     {
@@ -283,20 +284,24 @@ class Manager implements Controller
         $command = "docker exec -it {$name} /bin/bash -c \"mysql -e \\\"GRANT ALL PRIVILEGES ON {$mysqlDatabase}.* TO '{$mysqlUser}'@'%' WITH GRANT OPTION\\\"\"";
         echo shell_exec($command);
     }
-    
+
     /**
      * @cli docker:start
      * @cliDescription Start docker container
      * @return void
+     * @throws Exception
      */
     public function start(): void
     {
         $name = $this->dockerConfig->get('name') ?? 'framework';
 
         echo "Starting docker container [{$name}]...\n";
-        echo shell_exec("docker start {$name}");
-        echo "To enter into container: docker exec -it {$this->dockerConfig->get('name')} /bin/bash\n";
+        $result = shell_exec("docker start {$name} 2>&1");
+        if (preg_match('/Cannot connect to the Docker daemon at .* Is the docker daemon running\?/Usi', $result)) {
+            throw new Exception("Docker daemon is not running. Please start docker daemon first.");
+        }
 
+        echo Symbol::COLOR_GREEN . "Docker container {$name} started. To enter into the container: docker exec -it {$this->dockerConfig->get('name')} /bin/bash\n" . Symbol::COLOR_RESET;
     }
 
     /**
@@ -309,7 +314,8 @@ class Manager implements Controller
         $name = $this->dockerConfig->get('name') ?? 'framework';
 
         echo "Stopping docker container [{$name}]...\n";
-        echo shell_exec("docker stop {$name}");
+        shell_exec("docker stop {$name}");
+        echo Symbol::COLOR_GREEN . "Docker container {$name} stopped.\n" . Symbol::COLOR_RESET;
     }
 
     /**
@@ -320,7 +326,8 @@ class Manager implements Controller
     public function stopAll(): void
     {
         echo "Stopping all docker containers...\n";
-        echo shell_exec("docker stop $(docker ps -a -q)");
+        shell_exec("docker stop $(docker ps -a -q)");
+        echo Symbol::COLOR_GREEN . "All docker containers has been stopped.\n" . Symbol::COLOR_RESET;
     }
 
     /**
