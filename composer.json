@@ -1,5 +1,8 @@
 {
     "name": "tereta/framework.docker",
+    "description": "Part of framework to manage a docker developer container",
+    "license": "Apache-2.0",
+    "version": "0.0.19",
     "type": "library",
     "autoload": {
         "psr-4": {
