@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Framework\Docker\Command;
+namespace Framework\Docker\Cli;
 
 use Framework\Cli\Interface\Controller;
 use Framework\Cli\Symbol;
