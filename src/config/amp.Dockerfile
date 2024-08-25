@@ -40,15 +40,26 @@ RUN usermod -d /var/lib/mysql mysql
 
 RUN chmod +x /usr/local/bin/start-services.sh
 
-RUN echo "echo \"···························WWW.TERETA.DEV······························\"" >> /root/.bashrc
-RUN echo "echo \"·······································································\"" >> /root/.bashrc
-RUN echo "echo \": _____                        _                     _                :\"" >> /root/.bashrc
-RUN echo "echo \":|_   _|   ___   _ __    ___  | |_    __ _        __| |   ___  __   __:\"" >> /root/.bashrc
-RUN echo "echo \":  | |    / _ \ | '__|  / _ \ | __|  / _  |      / _  |  / _ \ \ \ / /:\"" >> /root/.bashrc
-RUN echo "echo \":  | |   |  __/ | |    |  __/ | |_  | (_| |  _  | (_| | |  __/  \ V / :\"" >> /root/.bashrc
-RUN echo "echo \":  |_|    \___| |_|     \___|  \__|  \__,_| (_)  \__,_|  \___|   \_/  :\"" >> /root/.bashrc
-RUN echo "echo \"·······································································\"" >> /root/.bashrc
-RUN echo "echo \"·······································································\"" >> /root/.bashrc
+
+RUN echo "echo \"wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3V1dX\
+LlRFUkVUQS5ERVbCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3\
+wrfCt8K3wrfCt8K3wrcK\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfC\
+t8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3\
+wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCtwo=\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"OiBfX19fXyAgICAgICAgICAgICAgICAgICAgICAgIF8gICAgICAgICAgICAgICAgICAgICBfICAg\
+ICAgICAgICAgICAgIDoK\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"OnxfICAgX3wgICBfX18gICBfIF9fICAgIF9fXyAgfCB8XyAgICBfXyBfICAgICAgICBfX3wgfCAg\
+IF9fXyAgX18gICBfXzoK\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"OiAgfCB8ICAgIC8gXyBcIHwgJ19ffCAgLyBfIFwgfCBfX3wgIC8gXyAgfCAgICAgIC8gXyAgfCAg\
+LyBfIFwgXCBcIC8gLzoK\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"OiAgfCB8ICAgfCAgX18vIHwgfCAgICB8ICBfXy8gfCB8XyAgfCAoX3wgfCAgXyAgfCAoX3wgfCB8\
+ICBfXy8gIFwgViAvIDoK\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"OiAgfF98ICAgIFxfX198IHxffCAgICAgXF9fX3wgIFxfX3wgIFxfXyxffCAoXykgIFxfXyxffCAg\
+XF9fX3wgICBcXy8gIDoK\" | base64 --decode" >> /root/.bashrc
+RUN echo "echo \"wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfC\
+t8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3\
+wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCtwo=\" | base64 --decode" >> /root/.bashrc
 
 EXPOSE 80 3306 9000 9003
 
