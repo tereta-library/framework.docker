@@ -241,6 +241,7 @@ class Manager implements Controller
 
     /**
      * @return void
+     * @throws Exception
      */
     private function buildConfigureDatabase(): void
     {
