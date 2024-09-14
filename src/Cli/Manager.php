@@ -111,6 +111,15 @@ class Manager implements Controller
             "Local HTTP port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
         $this->dockerConfig->set('http.port', $input);
 
+        echo "Local HTTPS port (443): ";
+        $input = trim(fgets(STDIN));
+        if (!$input) {
+            $input = '443';
+        }
+        echo Symbol::UP_LINE . Symbol::CLEAR_LINE .
+            "Local HTTPS port: " . Symbol::COLOR_GREEN . $input . Symbol::COLOR_RESET . "\n";
+        $this->dockerConfig->set('https.port', $input);
+
         echo "Will you use local MySQL server (Yes): ";
         $input = trim(fgets(STDIN));
         if (!$input) {
@@ -202,7 +211,7 @@ class Manager implements Controller
     {
         echo "Building docker image...\n";
 
-        if ($noCache == 'yes') {
+        if ($noCache == 'update') {
             $noCache = '--no-cache';
         }
 
@@ -220,6 +229,7 @@ class Manager implements Controller
     {
         $name = $this->dockerConfig->get('name') ?? 'framework';
         $httpPort = $this->dockerConfig->get('http.port') ?? '80';
+        $httpsPort = $this->dockerConfig->get('https.port') ?? '433';
         $mysqlPort = $this->dockerConfig->get('mysql.port') ?? '3306';
 
         echo "Building docker container [{$name}]...\n";
@@ -231,6 +241,7 @@ class Manager implements Controller
             "-v {$this->dockerContext}/files/amp/php.ini:/etc/php/8.3/apache2/php.ini " .
             "--add-host host.docker.internal:host-gateway " .
             "-p {$httpPort}:80 " .
+            "-p {$httpsPort}:443 " .
             "-p {$mysqlPort}:3306 " .
             static::DOCKER_IMAGE_NAME;
 

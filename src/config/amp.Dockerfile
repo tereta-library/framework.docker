@@ -13,8 +13,13 @@ RUN apt-get install -y php php-fpm php-bcmath php-cli php-oauth php-common \
     php-zip php-dev php-imagick libapache2-mod-php
 
 RUN apt-get install -y apache2
+RUN apt-get install -y openssl
 
-RUN a2enmod php8.3; a2enmod rewrite
+RUN openssl req -x509 -nodes -days 7300 -newkey rsa:2048  \
+    -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt \
+    -subj "/C=US/ST=New York/L=New York/O=MyCompany/OU=IT/CN=example.com"
+
+RUN a2enmod php8.3; a2enmod rewrite; a2enmod ssl
 
 RUN pecl install -f xdebug
 
@@ -39,7 +44,6 @@ RUN echo "tail -f /var/log/apache2/error.log" >>  /usr/local/bin/start-services.
 RUN usermod -d /var/lib/mysql mysql
 
 RUN chmod +x /usr/local/bin/start-services.sh
-
 
 RUN echo "echo \"wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3V1dX\
 LlRFUkVUQS5ERVbCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3wrfCt8K3\
