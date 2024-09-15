@@ -15,9 +15,9 @@ RUN apt-get install -y php php-fpm php-bcmath php-cli php-oauth php-common \
 RUN apt-get install -y apache2
 RUN apt-get install -y openssl
 
-RUN openssl req -x509 -nodes -days 7300 -newkey rsa:2048  \
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048  \
     -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt \
-    -subj "/C=US/ST=New York/L=New York/O=MyCompany/OU=IT/CN=example.com"
+    -subj "/C=US/ST=New York/L=New York/O=MyCompany/OU=IT/CN=local.tereta.dev"
 
 RUN a2enmod php8.3; a2enmod rewrite; a2enmod ssl
 
