@@ -298,6 +298,17 @@ class Manager implements Controller
     }
 
     /**
+     * @cli docker
+     * @cliDescription Start docker container
+     * @return void
+     * @throws Exception
+     */
+    public function docker(): void
+    {
+        $this->start();
+    }
+
+    /**
      * @cli docker:start
      * @cliDescription Start docker container
      * @return void
